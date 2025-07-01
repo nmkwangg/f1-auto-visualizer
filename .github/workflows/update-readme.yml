@@ -1,0 +1,34 @@
+name: Auto-update F1 README
+
+on:
+  schedule:
+    - cron: '0 6 * * Mon'    # runs every Monday at 06:00 UTC
+  workflow_dispatch:         # also allows manual runs via the GitHub UI
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Generate plots & update README
+        run: python readme_machine.py
+
+      - name: Commit & push changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add README.md visualization/
+          git commit -m "chore: auto-update visuals" || exit 0
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
