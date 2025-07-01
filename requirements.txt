@@ -4,6 +4,3 @@ pandas
 seaborn
 timple
 numpy
-os
-logging
-warnings
