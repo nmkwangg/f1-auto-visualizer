@@ -1,0 +1,9 @@
+fastf1
+matplotlib
+pandas
+seaborn
+timple
+numpy
+os
+logging
+warnings
