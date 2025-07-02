@@ -691,7 +691,11 @@ def pos_change(session, save_path):
     ax.set_xlabel("Lap", color="white")
     ax.set_ylabel("Position", color="white")
     ax.tick_params(axis='both', colors='white')
-    ax.set_title(f"{session}  •  Position Changes", color="white", pad=8)
+    # ← new, clean title:
+    race = session.event["EventName"]
+    year = session.event.year
+    ax.set_title(f"{year} {race} — Race • Position Changes",
+             color="white", pad=8)
     ax.legend(bbox_to_anchor=(1.0, 1.02))
     leg = ax.legend(bbox_to_anchor=(1.0, 1.02))
     # make all legend texts white
