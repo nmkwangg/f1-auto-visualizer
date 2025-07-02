@@ -315,7 +315,7 @@ def top_speed_comparison(session, save_path):
 # In[10]:
 
 
-def telemetry_comparison(d1, d2, save_path):
+def telemetry_comparison(session, d1, d2, save_path):
     # ---------- fastest laps ------------------------------------------------
     d1_lap = session.laps.pick_drivers(d1).pick_fastest()
     d2_lap = session.laps.pick_drivers(d2).pick_fastest()
@@ -404,7 +404,7 @@ def telemetry_comparison(d1, d2, save_path):
 # In[11]:
 
 
-def track_domination(d1, d2, save_path):
+def track_domination(session, d1, d2, save_path):
     # Get fastest lap for each driver from the qualifying session.
     d1_lap = session.laps.pick_driver(d1).pick_fastest()
     d2_lap = session.laps.pick_driver(d2).pick_fastest()

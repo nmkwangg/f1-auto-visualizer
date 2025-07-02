@@ -82,17 +82,17 @@ def main():
 
             # 2) Quali only: compare top-2 qualifiers
             if tag == "QUALIFYING":
-                qr = sess.results[sess.results["Q3Time"].notna()]
-                top2 = qr.sort_values("Q3Time")["Abbreviation"].tolist()[:2]
-                if len(top2) == 2:
-                    d1, d2 = top2
-                    # telemetry
+                # pick top 2 by fastest lap (fallback regardless of Q3Time)
+                bests = []
+                for drv in sess.laps["Driver"].unique():
+                    fl = sess.laps.pick_drivers(drv).pick_fastest()
+                    if fl is not None:
+                        bests.append((drv, fl["LapTime"].total_seconds()))
+                bests.sort(key=lambda x: x[1])
+                if len(bests) >= 2:
+                    d1, d2 = bests[0][0], bests[1][0]
                     p = os.path.join(folder, "telemetry.png")
                     telemetry_comparison(sess, d1, d2, p)
-                    imgs.append(p)
-                    # track domination
-                    p = os.path.join(folder, "track_domination.png")
-                    track_domination(sess, d1, d2, p)
                     imgs.append(p)
 
             # 3) update README for this section
