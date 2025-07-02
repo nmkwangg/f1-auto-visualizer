@@ -224,7 +224,7 @@ def sector_gap(session, save_path):
 
     fig.suptitle(f"Best Sector Gap ({session})",
                  fontsize=16, fontweight='bold', color='white', y=0.94)
-    plt.tight_layout(rect=[0.10, 0.04, 1, 0.92])  # extra left margin for labels
+    fig.subplots_adjust(left=0.15, right=0.85, top=0.92, bottom=0.04)
     fig.savefig(save_path)
     plt.close(fig)
 
@@ -693,15 +693,14 @@ def pos_change(session, save_path):
     ax.tick_params(axis='both', colors='white')
     ax.set_title(f"{session}  •  Position Changes", color="white", pad=10)
     ax.legend(bbox_to_anchor=(1.0, 1.02))
-    # build legend with driver styles + SC/VSC patches
-    #handles, labels = ax.get_legend_handles_labels()
-    #uniq = {l: h for h, l in zip(handles, labels) if l not in ("_",)}
-    #uniq["SC"]  = Patch(facecolor="orange", alpha=0.45, edgecolor="none")
-    #uniq["VSC"] = Patch(facecolor="orange", alpha=0.45, edgecolor="none", hatch='-')
-    #leg = ax.legend(uniq.values(), uniq.keys(), ncol=5, frameon=False,
-                    #fontsize=8, bbox_to_anchor=(1.0, 1.02))
-   # for txt in leg.get_texts():
-   #     txt.set_color("white")
+    leg = ax.legend(bbox_to_anchor=(1.0, 1.02))
+    # make all legend texts white
+    for txt in leg.get_texts():
+        txt.set_color("white")
+    # also ensure the axis ticks & labels are white
+    ax.tick_params(axis='both', colors='white')
+    ax.xaxis.label.set_color('white')
+    ax.yaxis.label.set_color('white')
 
     
     fig.savefig(save_path)
@@ -729,7 +728,8 @@ def team_pace(session, save_path):
     team_palette = {t: fastf1.plotting.get_team_color(t, session=session)
                     for t in team_order}
 
-    fig, ax = plt.subplots(figsize=(15, 10))
+    fig, ax = plt.subplots(figsize=(15, 10),  facecolor="#202020")
+    ax.set_facecolor("#202020")
 
     sns.boxplot(
         data=transformed_laps,
@@ -750,9 +750,11 @@ def team_pace(session, save_path):
     )
     
 
-    plt.title(f"{session} Team Pace Comparison")
-    ax.set_xlabel("")          # x‑label is redundant
-    ax.margins(x=0.02)         # tiny side‑padding so nothing is clipped
+    ax.set_title(f"{session} Team Pace Comparison", color="white")
+    ax.set_xlabel("")
+    ax.tick_params(axis='x', colors='white')
+    ax.tick_params(axis='y', colors='white')
+    ax.margins(x=0.02)         
     ax.xaxis.grid(False)
     plt.tight_layout()
     
