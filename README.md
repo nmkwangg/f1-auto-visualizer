@@ -30,6 +30,11 @@ This project automatically generates and updates a visual recap of every Formula
 
 ## Qualifying
 <!-- QUALIFYING_START -->
+![quali_result.png](visualization/2025_Austrian_Grand_Prix/QUALIFYING/quali_result.png)
+![sector_gap.png](visualization/2025_Austrian_Grand_Prix/QUALIFYING/sector_gap.png)
+![top_speed_comparison.png](visualization/2025_Austrian_Grand_Prix/QUALIFYING/top_speed_comparison.png)
+![aero_performance.png](visualization/2025_Austrian_Grand_Prix/QUALIFYING/aero_performance.png)
+![telemetry.png](visualization/2025_Austrian_Grand_Prix/QUALIFYING/telemetry.png)
 <!-- QUALIFYING_END -->
 
 ## Race
