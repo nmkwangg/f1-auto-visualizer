@@ -223,8 +223,8 @@ def sector_gap(session, save_path):
         ax.tick_params(axis='y', colors='white')
 
     fig.suptitle(f"Best Sector Gap ({session})",
-                 fontsize=16, fontweight='bold', color='white', y=0.94)
-    fig.subplots_adjust(left=0.15, right=0.85, top=0.92, bottom=0.04)
+                 fontsize=16, fontweight='bold', color='white', y=0.98)
+    fig.subplots_adjust(left=0.10, right=0.9, top=0.92, bottom=0.04)
     fig.savefig(save_path)
     plt.close(fig)
 
