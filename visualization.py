@@ -35,9 +35,8 @@ warnings.filterwarnings("ignore", category=UserWarning)   # optional
 # In[3]:
 
 
-# Enable the cache
-ff1.Cache.enable_cache(r"F:\F1 project\cache") 
-
+# Use the cache folder in the repo root
+ff1.Cache.enable_cache("cache")
 
 # In[5]:
 
