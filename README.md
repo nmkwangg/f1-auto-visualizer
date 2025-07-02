@@ -1,6 +1,6 @@
 # 🏎️ F1 Auto Visualizer
 
-Auto-updating charts after each F1 session.
+This project automatically generates and updates a visual recap of every Formula 1 race weekend using data from the FastF1 library. After each Grand Prix, key performance metrics from practice, qualifying, and the race are analyzed and visualized—then embedded directly into this README. All updates are handled entirely through automation via GitHub Actions.
 
 ---
 
@@ -17,8 +17,8 @@ Auto-updating charts after each F1 session.
 <!-- FP3_END -->
 
 ## Qualifying
-<!-- QUALI_START -->
-<!-- QUALI_END -->
+<!-- QUALIFYING_START -->
+<!-- QUALIFYING_END -->
 
 ## Race
 <!-- RACE_START -->
