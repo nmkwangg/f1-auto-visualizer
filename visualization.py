@@ -406,8 +406,8 @@ def telemetry_comparison(session, d1, d2, save_path):
 
 def track_domination(session, d1, d2, save_path):
     # Get fastest lap for each driver from the qualifying session.
-    d1_lap = session.laps.pick_driver(d1).pick_fastest()
-    d2_lap = session.laps.pick_driver(d2).pick_fastest()
+    d1_lap = session.laps.pick_drivers(d1).pick_fastest()
+    d2_lap = session.laps.pick_drivers(d2).pick_fastest()
     
     # Get telemetry data with added distance.
     telemetry_driver01 = d1_lap.get_telemetry().add_distance()
@@ -419,7 +419,7 @@ def track_domination(session, d1, d2, save_path):
     [telemetry_driver01, telemetry_driver02],
     ignore_index=True)
     
-    # Define the number of mini-sectors (e.g., 21 mini-sectors)
+    # Define the number of mini-sectors 
     num_minisectors = 7 * 3
     total_distance = max(telemetry_drivers['Distance'])
     minisector_length = total_distance / num_minisectors
