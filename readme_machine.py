@@ -54,8 +54,7 @@ def main():
         "FP1":         [sector_gap, top_speed_comparison, plot_top_speed_heatmap, aero_performance],
         "FP2":         [sector_gap, top_speed_comparison, plot_top_speed_heatmap, aero_performance],
         "FP3":         [sector_gap, top_speed_comparison, plot_top_speed_heatmap, aero_performance],
-        "QUALIFYING":  [quali_result, sector_gap, top_speed_comparison, aero_performance],
-        "RACE":        [pos_change, tyre_strategy, team_pace, tyre_deg],
+        "RACE":        [pos_change, team_pace, tyre_strategy, tyre_deg],
     }
 
     # list of sessions to run
@@ -74,28 +73,37 @@ def main():
             folder = create_folder(year_gp, tag)
             imgs = []
 
-            # 1) run all simple plots for this session
-            for fn in session_plots[tag]:
-                out = os.path.join(folder, f"{fn.__name__}.png")
-                fn(sess, out)
-                imgs.append(out)
-
-            # 2) Quali only: compare top-2 qualifiers
             if tag == "QUALIFYING":
-                # pick top 2 by fastest lap (fallback regardless of Q3Time)
                 bests = []
                 for drv in sess.laps["Driver"].unique():
                     fl = sess.laps.pick_drivers(drv).pick_fastest()
                     if fl is not None:
                         bests.append((drv, fl["LapTime"].total_seconds()))
                 bests.sort(key=lambda x: x[1])
+        
                 if len(bests) >= 2:
                     d1, d2 = bests[0][0], bests[1][0]
-                    p = os.path.join(folder, "telemetry.png")
-                    telemetry_comparison(sess, d1, d2, p)
-                    imgs.append(p)
+        
+                    qual_funcs = [
+                        (quali_result,        (sess, os.path.join(folder, "quali_result.png"))),
+                        (telemetry_comparison,(sess, d1, d2,   os.path.join(folder, "telemetry.png"))),
+                        (track_domination,    (sess, d1, d2,   os.path.join(folder, "track_domination.png"))),
+                        (sector_gap,          (sess, os.path.join(folder, "sector_gap.png"))),
+                        (top_speed_comparison,(sess, os.path.join(folder, "top_speed_comparison.png"))),
+                        (aero_performance,    (sess, os.path.join(folder, "aero_performance.png"))),
+                    ]
+        
+                    for fn, args in qual_funcs:
+                        fn(*args)
+                        imgs.append(args[-1])
+            else:
+                # use session_plots for FP1/FP2/FP3/RACE
+                for fn in session_plots[tag]:
+                    out = os.path.join(folder, f"{fn.__name__}.png")
+                    fn(sess, out)
+                    imgs.append(out)
 
-            # 3) update README for this section
+            # update README for this section
             update_readme_section(tag, imgs)
 
         except Exception as e:
