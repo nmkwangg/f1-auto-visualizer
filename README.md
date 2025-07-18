@@ -65,3 +65,19 @@ This project automatically generates and updates a visual recap of every Formula
 <!-- RACE_END -->
 
 </details>
+
+<details>
+<summary><strong>Sprint Shootout</strong></summary>
+
+<!-- SHOOTOUT_START -->
+<!-- SHOOTOUT_END -->
+
+</details>
+
+<details>
+<summary><strong>Sprint Race</strong></summary>
+
+<!-- SPRINT_START -->
+<!-- SPRINT_END -->
+
+</details>
