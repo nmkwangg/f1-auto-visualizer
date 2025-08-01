@@ -132,8 +132,13 @@ def main():
                 # all other sessions use the generic mapping
                 for fn in session_plots[tag]:
                     out = os.path.join(folder, f"{fn.__name__}.png")
-                    fn(sess, out)
-                    imgs.append(out)
+                    print(f"▶️ Running {fn.__name__} for {tag} ...")
+                    try:
+                        fn(sess, out)
+                        imgs.append(out)
+                        print(f"✅ {fn.__name__} completed for {tag}")
+                    except Exception as e:
+                        print(f"⚠️ {fn.__name__} FAILED for {tag}: {e}")
 
             update_readme_section(tag, imgs)
 
