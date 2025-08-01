@@ -46,18 +46,14 @@ def get_latest_event():
 
 def main():
     year = pd.Timestamp.utcnow().year
-
-    # ——— new sprint detection block ———
+    # load schedule and pick the last completed event
     sched = fastf1.get_event_schedule(year, include_testing=False)
-    sprint_cols = [c for c in sched.columns if "sprint" in c.lower()]
-    print(f"Checking sprint columns: {sprint_cols}")
+    done  = sched[sched["Session1Date"] < pd.Timestamp.utcnow()]
+    ev    = done.iloc[-1]
 
-    done   = sched[sched["Session1Date"] < pd.Timestamp.utcnow()]
-    ev     = done.iloc[-1]
-    is_sprint = any(pd.notna(ev[c]) for c in sprint_cols)
-    print(f"\n=== {year} {ev['EventName']} ===")
+    is_sprint = str(ev.get("EventFormat", "")).strip().lower() == "sprint"
+    print(f"\n=== {year} {ev['EventName']} (format={ev['EventFormat']}) ===")
     print(f"Detected sprint weekend? {is_sprint}\n")
-    # ——— end sprint detection ———
 
     gp      = ev["EventName"].replace(" ", "_")
     year_gp = f"{year}_{gp}"

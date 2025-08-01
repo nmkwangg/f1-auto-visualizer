@@ -132,7 +132,7 @@ def tyre_strategy(session, save_path):
         x0 = 0
         for _, s in drv_stints.iterrows():
             ax.barh(drv, s["StintLength"], left=x0,
-                    color=fastf1.plotting.COMPOUND_COLORS[s["Compound"]],
+                    color=fastf1.plotting.get_compound_mapping[s["Compound"]],
                     edgecolor="black",
                     hatch="" if s["FreshTyre"] else "//",
                     label=f"{s['Compound']} {'Fresh' if s['FreshTyre'] else 'Used'}")
