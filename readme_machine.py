@@ -73,7 +73,7 @@ def main():
     if is_sprint:
         sessions = [
             ("FP1",                "FP1"),
-            ("SPRINT QUALIFYING",  "SQ"),
+            ("SPRINT_QUALIFYING",  "SQ"),
             ("SPRINT",             "S"),
             ("QUALIFYING",         "Q"),
             ("RACE",               "R"),
@@ -105,7 +105,7 @@ def main():
         imgs = []
 
         # QUALI and SPRINT QUALIFYING both follow the same “top-2 + custom order” logic
-        if tag in ("QUALIFYING", "SPRINT QUALIFYING"):
+        if tag in ("QUALIFYING", "SPRINT_QUALIFYING"):
             # pick top-2 fastest laps
             bests = []
             for drv in sess.laps["Driver"].unique():
