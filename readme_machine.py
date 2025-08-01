@@ -45,16 +45,23 @@ def get_latest_event():
 
 
 def main():
-    year, ev = get_latest_event()
-    gp       = ev["EventName"].replace(" ", "_")
-    year_gp  = f"{year}_{gp}"
-    is_sprint = any(
-    pd.notna(ev.get(col))
-    for col in ("SprintShootoutDate", "SprintRaceDate", "SprintDate")
-)
+    year = pd.Timestamp.utcnow().year
 
+    # ——— new sprint detection block ———
+    sched = fastf1.get_event_schedule(year, include_testing=False)
+    sprint_cols = [c for c in sched.columns if "sprint" in c.lower()]
+    print(f"Checking sprint columns: {sprint_cols}")
+
+    done   = sched[sched["Session1Date"] < pd.Timestamp.utcnow()]
+    ev     = done.iloc[-1]
+    is_sprint = any(pd.notna(ev[c]) for c in sprint_cols)
     print(f"\n=== {year} {ev['EventName']} ===")
     print(f"Detected sprint weekend? {is_sprint}\n")
+    # ——— end sprint detection ———
+
+    gp      = ev["EventName"].replace(" ", "_")
+    year_gp = f"{year}_{gp}"
+
 
     # which plots apply to each non-quali session
     session_plots = {
