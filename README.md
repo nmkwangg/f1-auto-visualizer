@@ -32,7 +32,7 @@ This project automatically generates and updates a visual recap of every Formula
 
 <!-- FP3_END -->
 
-<details>
+</details>
 
 <details>
 <summary><strong>SPRINT QUALIFYING</strong></summary>
