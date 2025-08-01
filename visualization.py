@@ -30,7 +30,11 @@ logging.getLogger('fastf1').setLevel(logging.WARNING)   # or logging.ERROR
 warnings.filterwarnings("ignore", category=FutureWarning)
 warnings.filterwarnings("ignore", category=UserWarning)   # optional
 
-
+try:
+    COMPOUND_COLORS = fastf1.plotting.COMPOUND_COLORS
+except AttributeError:
+    # fallback for newer FastF1
+    COMPOUND_COLORS = fastf1.plotting._compound_colors
 # In[3]:
 
 

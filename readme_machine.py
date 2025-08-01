@@ -48,7 +48,10 @@ def main():
     year, ev = get_latest_event()
     gp       = ev["EventName"].replace(" ", "_")
     year_gp  = f"{year}_{gp}"
-    is_sprint = pd.notna(ev.get("SprintShootoutDate"))
+    is_sprint = any(
+    pd.notna(ev.get(col))
+    for col in ("SprintShootoutDate", "SprintRaceDate", "SprintDate")
+)
 
     print(f"\n=== {year} {ev['EventName']} ===")
     print(f"Detected sprint weekend? {is_sprint}\n")
@@ -120,7 +123,7 @@ def main():
                 try:
                     fn(*args)
                     imgs.append(args[-1])
-                    print(f"success")
+                    print("success")
                 except Exception as e:
                     print(f"failed: {e}")
 
@@ -132,7 +135,7 @@ def main():
                 try:
                     fn(sess, out)
                     imgs.append(out)
-                    print(f"success")
+                    print("success")
                 except Exception as e:
                     print(f"failed: {e}")
 
