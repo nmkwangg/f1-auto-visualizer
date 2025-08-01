@@ -21,6 +21,7 @@ from matplotlib.patches import Patch
 import os
 
 
+
 # In[2]:
 
 
@@ -103,52 +104,70 @@ def shade_periods(ax, sc_laps, vsc_laps,
 
 
 def tyre_strategy(session, save_path):
+    # gather stint table (incl. FreshTyre) 
     laps = session.laps
-    stints = (laps[["Driver","Stint","Compound","FreshTyre","LapNumber"]]
-              .groupby(["Driver","Stint","Compound","FreshTyre"])
-              .count()
-              .reset_index()
-              .rename(columns={"LapNumber":"StintLength"}))
+    stints = (
+        laps[["Driver", "Stint", "Compound", "FreshTyre", "LapNumber"]]
+        .groupby(["Driver", "Stint", "Compound", "FreshTyre"])
+        .count()
+        .reset_index()
+        .rename(columns={"LapNumber": "StintLength"})
+    )
 
+    # drop any stints with missing or 'NONE' compound
+    stints = stints[stints["Compound"].notna() & (stints["Compound"] != "NONE")]
+
+    # driver order
     drivers = [session.get_driver(d)["Abbreviation"] for d in session.drivers]
 
-    # find SC / VSC laps once
+    # find SC / VSC laps
     sc_laps, vsc_laps = find_sc_laps(laps)
 
-    # plotting 
     fig, ax = plt.subplots(figsize=(14, 8), constrained_layout=True)
     ax.set_title(f"{session.event['EventName']} {session.event.year}  –  Tyre Strategy",
                  color='white')
-    ax.set_facecolor("#202020"); fig.patch.set_facecolor("#202020")
-    ax.invert_yaxis(); ax.grid(False)
+    ax.set_facecolor("#202020")
+    fig.patch.set_facecolor("#202020")
+    ax.invert_yaxis()
+    ax.grid(False)
 
-    # shade neutral zones first
     shade_periods(ax, sc_laps, vsc_laps)
 
-    # draw bars
     for drv in drivers:
         drv_stints = stints[stints["Driver"] == drv]
         x0 = 0
         for _, s in drv_stints.iterrows():
-            ax.barh(drv, s["StintLength"], left=x0,
-                    color=get_compound_color(s["Compound"], session=session),
-                    edgecolor="black",
-                    hatch="" if s["FreshTyre"] else "//",
-                    label=f"{s['Compound']} {'Fresh' if s['FreshTyre'] else 'Used'}")
+            comp = s["Compound"]
+            try:
+                color = get_compound_color(comp, session=session)
+            except Exception:
+                color = "#FFFFFF"
+            ax.barh(
+                drv,
+                s["StintLength"],
+                left=x0,
+                color=color,
+                edgecolor="black",
+                hatch="" if s["FreshTyre"] else "//",
+                label=f"{comp} {'Fresh' if s['FreshTyre'] else 'Used'}"
+            )
             x0 += s["StintLength"]
-
-    # legend: keep unique labels + SC/VSC patches
-    h, l = ax.get_legend_handles_labels()
-    uniq = {lab: han for han, lab in zip(h, l) if lab != "_"}
+            
+    handles, labels = ax.get_legend_handles_labels()
+    uniq = {}
+    for h, l in zip(handles, labels):
+        if l not in uniq and l != "_":
+            uniq[l] = h
     uniq["SC"]  = Patch(facecolor="orange", alpha=0.45)
     uniq["VSC"] = Patch(facecolor="orange", alpha=0.45, hatch='-')
     leg = ax.legend(uniq.values(), uniq.keys(), ncol=5, frameon=False, fontsize=8)
-    for t in leg.get_texts(): t.set_color("white")
+    for txt in leg.get_texts():
+        txt.set_color("white")
 
     ax.tick_params(axis='both', colors='white')
+
     fig.savefig(save_path)
     plt.close(fig)
-
 
 # In[8]:
 
