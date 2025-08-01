@@ -13,6 +13,7 @@ from matplotlib.collections import LineCollection
 from matplotlib.lines import Line2D
 import fastf1 as ff1
 import fastf1.plotting 
+from fastf1.plotting import get_compound_color
 from fastf1.core import Laps
 from timple.timedelta import strftimedelta
 import logging, warnings
@@ -135,7 +136,7 @@ def tyre_strategy(session, save_path):
         x0 = 0
         for _, s in drv_stints.iterrows():
             ax.barh(drv, s["StintLength"], left=x0,
-                    color=fastf1.plotting.COMPOUND_COLORS[s["Compound"]],
+                    color=get_compound_color(s["Compound"]),
                     edgecolor="black",
                     hatch="" if s["FreshTyre"] else "//",
                     label=f"{s['Compound']} {'Fresh' if s['FreshTyre'] else 'Used'}")
