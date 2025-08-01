@@ -46,10 +46,14 @@ def get_latest_event():
 
 def main():
     year, ev = get_latest_event()
-    is_sprint = pd.notna(ev.get("SprintShootoutDate"))
     gp       = ev["EventName"].replace(" ", "_")
     year_gp  = f"{year}_{gp}"
+    is_sprint = pd.notna(ev.get("SprintShootoutDate"))
 
+    print(f"\n=== {year} {ev['EventName']} ===")
+    print(f"Detected sprint weekend? {is_sprint}\n")
+
+    # which plots apply to each non-quali session
     session_plots = {
         "FP1":       [sector_gap, top_speed_comparison, plot_top_speed_heatmap, aero_performance],
         "FP2":       [sector_gap, top_speed_comparison, plot_top_speed_heatmap, aero_performance],
@@ -58,13 +62,14 @@ def main():
         "RACE":      [pos_change, tyre_strategy, team_pace, tyre_deg],
     }
 
+    # pick the list of sessions based on sprint flag
     if is_sprint:
         sessions = [
-            ("FP1",       "FP1"),
+            ("FP1",                "FP1"),
             ("SPRINT QUALIFYING",  "SQ"),
-            ("SPRINT",    "S"),
-            ("QUALIFYING","Q"),
-            ("RACE",      "R")
+            ("SPRINT",             "S"),
+            ("QUALIFYING",         "Q"),
+            ("RACE",               "R"),
         ]
     else:
         sessions = [
@@ -72,93 +77,81 @@ def main():
             ("FP2",       "FP2"),
             ("FP3",       "FP3"),
             ("QUALIFYING","Q"),
-            ("RACE",      "R")
+            ("RACE",      "R"),
         ]
 
     for tag, code in sessions:
+        print(f"── Attempting session: {tag}  (code={code})  ──")
+        # try to load the session
         try:
             sess = get_session(year, ev["EventName"], code)
             sess.load()
-            folder = create_folder(year_gp, tag)
-            imgs = []
-
-            if tag == "QUALIFYING":
-                # 1) pick top-2 fastest laps
-                bests = []
-                for drv in sess.laps["Driver"].unique():
-                    fl = sess.laps.pick_drivers(drv).pick_fastest()
-                    if fl is not None:
-                        bests.append((drv, fl["LapTime"].total_seconds()))
-                bests.sort(key=lambda x: x[1])
-                d1, d2 = bests[0][0], bests[1][0]
-
-                # 2) draw in THIS exact order:
-                qual_funcs = [
-                    (quali_result,         (sess, os.path.join(folder, "quali_result.png"))),
-                    (telemetry_comparison, (sess, d1, d2,   os.path.join(folder, "telemetry.png"))),
-                    (track_domination,     (sess, d1, d2,   os.path.join(folder, "track_domination.png"))),
-                    (sector_gap,           (sess, os.path.join(folder, "sector_gap.png"))),
-                    (top_speed_comparison, (sess, os.path.join(folder, "top_speed_comparison.png"))),
-                    (aero_performance,     (sess, os.path.join(folder, "aero_performance.png"))),
-                ]
-                for fn, args in qual_funcs:
-                    fn(*args)
-                    imgs.append(args[-1])
-                    
-            elif tag == "SPRINT QUALIFYING":
-                # 1) pick top-2 fastest laps
-                bests = []
-                for drv in sess.laps["Driver"].unique():
-                    fl = sess.laps.pick_drivers(drv).pick_fastest()
-                    if fl is not None:
-                        bests.append((drv, fl["LapTime"].total_seconds()))
-                bests.sort(key=lambda x: x[1])
-                d1, d2 = bests[0][0], bests[1][0]
-
-                # 2) draw in THIS exact order:
-                qual_funcs = [
-                    (quali_result,         (sess, os.path.join(folder, "quali_result.png"))),
-                    (telemetry_comparison, (sess, d1, d2,   os.path.join(folder, "telemetry.png"))),
-                    (track_domination,     (sess, d1, d2,   os.path.join(folder, "track_domination.png"))),
-                    (sector_gap,           (sess, os.path.join(folder, "sector_gap.png"))),
-                    (top_speed_comparison, (sess, os.path.join(folder, "top_speed_comparison.png"))),
-                    (aero_performance,     (sess, os.path.join(folder, "aero_performance.png"))),
-                ]
-                for fn, args in qual_funcs:
-                    fn(*args)
-                    imgs.append(args[-1])
-
-            else:
-                # all other sessions use the generic mapping
-                for fn in session_plots[tag]:
-                    out = os.path.join(folder, f"{fn.__name__}.png")
-                    print(f"▶️ Running {fn.__name__} for {tag} ...")
-                    try:
-                        fn(sess, out)
-                        imgs.append(out)
-                        print(f"✅ {fn.__name__} completed for {tag}")
-                    except Exception as e:
-                        print(f"⚠️ {fn.__name__} FAILED for {tag}: {e}")
-
-            update_readme_section(tag, imgs)
-
+            print(f"Loaded {tag}")
         except Exception as e:
-            print(f"⚠️ Skipping {tag}: {e}")
+            print(f"Could not load {tag}: {e}")
+            # clear out that section so old images disappear
+            update_readme_section(tag, [])
+            continue
 
-    #Cleanup for normal weekends
+        # create the folder & images list
+        folder = create_folder(year_gp, tag)
+        imgs = []
+
+        # QUALI and SPRINT QUALIFYING both follow the same “top-2 + custom order” logic
+        if tag in ("QUALIFYING", "SPRINT QUALIFYING"):
+            # pick top-2 fastest laps
+            bests = []
+            for drv in sess.laps["Driver"].unique():
+                fl = sess.laps.pick_drivers(drv).pick_fastest()
+                if fl is not None:
+                    bests.append((drv, fl["LapTime"].total_seconds()))
+            bests.sort(key=lambda x: x[1])
+            d1, d2 = bests[0][0], bests[1][0]
+            bespoke = [
+                (quali_result,         (sess, os.path.join(folder, "quali_result.png"))),
+                (telemetry_comparison, (sess, d1, d2,   os.path.join(folder, "telemetry.png"))),
+                (track_domination,     (sess, d1, d2,   os.path.join(folder, "track_domination.png"))),
+                (sector_gap,           (sess, os.path.join(folder, "sector_gap.png"))),
+                (top_speed_comparison, (sess, os.path.join(folder, "top_speed_comparison.png"))),
+                (aero_performance,     (sess, os.path.join(folder, "aero_performance.png"))),
+            ]
+            for fn, args in bespoke:
+                print(f"  ▶️ {fn.__name__} for {tag} …")
+                try:
+                    fn(*args)
+                    imgs.append(args[-1])
+                    print(f"success")
+                except Exception as e:
+                    print(f"failed: {e}")
+
+        else:
+            # all other sessions from session_plots
+            for fn in session_plots.get(tag, []):
+                out = os.path.join(folder, f"{fn.__name__}.png")
+                print(f"  ▶️ {fn.__name__} for {tag} …")
+                try:
+                    fn(sess, out)
+                    imgs.append(out)
+                    print(f"success")
+                except Exception as e:
+                    print(f"failed: {e}")
+
+        # finally, always update the README section
+        update_readme_section(tag, imgs)
+        print(f"★ README section {tag} updated with {len(imgs)} images\n")
+
+    # cleanup empty sprint blocks on a normal weekend
     if not is_sprint:
         text = open("README.md","r",encoding="utf-8").read()
-        # remove the SHOOTOUT block
         text = re.sub(
             r"<details>\s*<summary><strong>Sprint Shootout.*?</details>\s*",
             "", text, flags=re.DOTALL
         )
-        # remove the SPRINT block
         text = re.sub(
             r"<details>\s*<summary><strong>Sprint Race.*?</details>\s*",
             "", text, flags=re.DOTALL
         )
         open("README.md","w",encoding="utf-8").write(text)
-        
+
 if __name__ == "__main__":
     main()
