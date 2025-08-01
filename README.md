@@ -58,10 +58,9 @@ This project automatically generates and updates a visual recap of every Formula
 <summary><strong>RACE</strong></summary>
 
 <!-- RACE_START -->
-![pos_change.png](visualization/2025_British_Grand_Prix/RACE/pos_change.png)
-![team_pace.png](visualization/2025_British_Grand_Prix/RACE/team_pace.png)
-![tyre_strategy.png](visualization/2025_British_Grand_Prix/RACE/tyre_strategy.png)
-![tyre_deg.png](visualization/2025_British_Grand_Prix/RACE/tyre_deg.png)
+![pos_change.png](visualization/2025_Belgian_Grand_Prix/RACE/pos_change.png)
+![team_pace.png](visualization/2025_Belgian_Grand_Prix/RACE/team_pace.png)
+![tyre_deg.png](visualization/2025_Belgian_Grand_Prix/RACE/tyre_deg.png)
 <!-- RACE_END -->
 
 </details>
