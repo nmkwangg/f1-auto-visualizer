@@ -55,7 +55,6 @@ def main():
     gp       = ev["EventName"].replace(" ", "_")
     year_gp  = f"{year}_{gp}"
 
-    # define which plots for each session
     session_plots = {
         "FP1":       [sector_gap, top_speed_comparison, plot_top_speed_heatmap, aero_performance],
         "FP2":       [sector_gap, top_speed_comparison, plot_top_speed_heatmap, aero_performance],
@@ -68,9 +67,9 @@ def main():
     if is_sprint:
         sessions = [
             ("FP1",       "FP1"),
-            ("SHOOTOUT",  "SQ"),   # sprint shootout
-            ("SPRINT",    "SP"),   # sprint race
-            ("QUALIFYING","Q"),    # normal qualifying still runs
+            ("SHOOTOUT",  "SQ"),
+            ("SPRINT",    "S"),
+            ("QUALIFYING","Q"),
             ("RACE",      "R")
         ]
     else:
@@ -88,7 +87,7 @@ def main():
             sess.load()
             folder = create_folder(year_gp, tag)
             imgs = []
-        
+
             if tag == "QUALIFYING":
                 # 1) pick top-2 fastest laps
                 bests = []
@@ -98,7 +97,7 @@ def main():
                         bests.append((drv, fl["LapTime"].total_seconds()))
                 bests.sort(key=lambda x: x[1])
                 d1, d2 = bests[0][0], bests[1][0]
-        
+
                 # 2) draw in THIS exact order:
                 qual_funcs = [
                     (quali_result,         (sess, os.path.join(folder, "quali_result.png"))),
@@ -111,19 +110,19 @@ def main():
                 for fn, args in qual_funcs:
                     fn(*args)
                     imgs.append(args[-1])
-        
+
             else:
                 # all other sessions use the generic mapping
                 for fn in session_plots[tag]:
                     out = os.path.join(folder, f"{fn.__name__}.png")
                     fn(sess, out)
                     imgs.append(out)
-        
+
             update_readme_section(tag, imgs)
 
         except Exception as e:
             print(f"⚠️ Skipping {tag}: {e}")
-                
+
     #Cleanup for normal weekends
     if not is_sprint:
         text = open("README.md","r",encoding="utf-8").read()
@@ -138,7 +137,6 @@ def main():
             "", text, flags=re.DOTALL
         )
         open("README.md","w",encoding="utf-8").write(text)
-
-
+        
 if __name__ == "__main__":
     main()
