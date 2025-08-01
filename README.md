@@ -20,10 +20,7 @@ This project automatically generates and updates a visual recap of every Formula
 <summary><strong>FP2</strong></summary>
 
 <!-- FP2_START -->
-![sector_gap.png](visualization/2025_British_Grand_Prix/FP2/sector_gap.png)
-![top_speed_comparison.png](visualization/2025_British_Grand_Prix/FP2/top_speed_comparison.png)
-![plot_top_speed_heatmap.png](visualization/2025_British_Grand_Prix/FP2/plot_top_speed_heatmap.png)
-![aero_performance.png](visualization/2025_British_Grand_Prix/FP2/aero_performance.png)
+
 <!-- FP2_END -->
 
 </details>
@@ -32,10 +29,7 @@ This project automatically generates and updates a visual recap of every Formula
 <summary><strong>FP3</strong></summary>
 
 <!-- FP3_START -->
-![sector_gap.png](visualization/2025_British_Grand_Prix/FP3/sector_gap.png)
-![top_speed_comparison.png](visualization/2025_British_Grand_Prix/FP3/top_speed_comparison.png)
-![plot_top_speed_heatmap.png](visualization/2025_British_Grand_Prix/FP3/plot_top_speed_heatmap.png)
-![aero_performance.png](visualization/2025_British_Grand_Prix/FP3/aero_performance.png)
+
 <!-- FP3_END -->
 
 </details>
