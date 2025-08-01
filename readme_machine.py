@@ -51,7 +51,8 @@ def main():
     done  = sched[sched["Session1Date"] < pd.Timestamp.utcnow()]
     ev    = done.iloc[-1]
 
-    is_sprint = str(ev.get("EventFormat", "")).strip().lower() == "sprint"
+    fmt   = str(ev.get("EventFormat", "")).strip().lower()
+    is_sprint = "sprint" in fmt
     print(f"\n=== {year} {ev['EventName']} (format={ev['EventFormat']}) ===")
     print(f"Detected sprint weekend? {is_sprint}\n")
 
