@@ -32,6 +32,20 @@ This project automatically generates and updates a visual recap of every Formula
 
 <!-- FP3_END -->
 
+<details>
+<summary><strong>SPRINT QUALIFYING</strong></summary>
+
+<!-- SPRINT QUALIFYING_START -->
+<!-- SPRINT QUALIFYING_END -->
+
+</details>
+
+<details>
+<summary><strong>SPRINT</strong></summary>
+
+<!-- SPRINT_START -->
+<!-- SPRINT_END -->
+
 </details>
 
 <details>

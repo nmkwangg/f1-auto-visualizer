@@ -167,6 +167,8 @@ def main():
         update_readme_section("FP2", [])
         print("Clearing FP3 section for sprint weekend")
         update_readme_section("FP3", [])
+        update_readme_section("SPRINT QUALIFYING", imgs)
+        update_readme_section("SPRINT", imgs)
 
 if __name__ == "__main__":
     main()
