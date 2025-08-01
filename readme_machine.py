@@ -43,11 +43,6 @@ def get_latest_event():
     done  = sched[sched["Session1Date"] < pd.Timestamp.utcnow()]
     return year, done.iloc[-1]
 
-def get_latest_event():
-    year = pd.Timestamp.utcnow().year
-    sched = fastf1.get_event_schedule(year, include_testing=False)
-    done  = sched[sched["Session1Date"] < pd.Timestamp.utcnow()]
-    return year, done.iloc[-1]
 
 def main():
     year, ev = get_latest_event()
@@ -59,7 +54,6 @@ def main():
         "FP1":       [sector_gap, top_speed_comparison, plot_top_speed_heatmap, aero_performance],
         "FP2":       [sector_gap, top_speed_comparison, plot_top_speed_heatmap, aero_performance],
         "FP3":       [sector_gap, top_speed_comparison, plot_top_speed_heatmap, aero_performance],
-        "SHOOTOUT":  [quali_result, sector_gap, top_speed_comparison, aero_performance],
         "SPRINT":    [pos_change, tyre_strategy, team_pace, tyre_deg],
         "RACE":      [pos_change, tyre_strategy, team_pace, tyre_deg],
     }
@@ -67,7 +61,7 @@ def main():
     if is_sprint:
         sessions = [
             ("FP1",       "FP1"),
-            ("SHOOTOUT",  "SQ"),
+            ("SPRINT QUALIFYING",  "SQ"),
             ("SPRINT",    "S"),
             ("QUALIFYING","Q"),
             ("RACE",      "R")
@@ -89,6 +83,29 @@ def main():
             imgs = []
 
             if tag == "QUALIFYING":
+                # 1) pick top-2 fastest laps
+                bests = []
+                for drv in sess.laps["Driver"].unique():
+                    fl = sess.laps.pick_drivers(drv).pick_fastest()
+                    if fl is not None:
+                        bests.append((drv, fl["LapTime"].total_seconds()))
+                bests.sort(key=lambda x: x[1])
+                d1, d2 = bests[0][0], bests[1][0]
+
+                # 2) draw in THIS exact order:
+                qual_funcs = [
+                    (quali_result,         (sess, os.path.join(folder, "quali_result.png"))),
+                    (telemetry_comparison, (sess, d1, d2,   os.path.join(folder, "telemetry.png"))),
+                    (track_domination,     (sess, d1, d2,   os.path.join(folder, "track_domination.png"))),
+                    (sector_gap,           (sess, os.path.join(folder, "sector_gap.png"))),
+                    (top_speed_comparison, (sess, os.path.join(folder, "top_speed_comparison.png"))),
+                    (aero_performance,     (sess, os.path.join(folder, "aero_performance.png"))),
+                ]
+                for fn, args in qual_funcs:
+                    fn(*args)
+                    imgs.append(args[-1])
+                    
+            elif tag == "SPRINT QUALIFYING":
                 # 1) pick top-2 fastest laps
                 bests = []
                 for drv in sess.laps["Driver"].unique():
