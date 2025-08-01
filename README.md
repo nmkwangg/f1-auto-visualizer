@@ -8,10 +8,10 @@ This project automatically generates and updates a visual recap of every Formula
 <summary><strong>FP1</strong></summary>
 
 <!-- FP1_START -->
-![sector_gap.png](visualization/2025_British_Grand_Prix/FP1/sector_gap.png)
-![top_speed_comparison.png](visualization/2025_British_Grand_Prix/FP1/top_speed_comparison.png)
-![plot_top_speed_heatmap.png](visualization/2025_British_Grand_Prix/FP1/plot_top_speed_heatmap.png)
-![aero_performance.png](visualization/2025_British_Grand_Prix/FP1/aero_performance.png)
+![sector_gap.png](visualization/2025_Belgian_Grand_Prix/FP1/sector_gap.png)
+![top_speed_comparison.png](visualization/2025_Belgian_Grand_Prix/FP1/top_speed_comparison.png)
+![plot_top_speed_heatmap.png](visualization/2025_Belgian_Grand_Prix/FP1/plot_top_speed_heatmap.png)
+![aero_performance.png](visualization/2025_Belgian_Grand_Prix/FP1/aero_performance.png)
 <!-- FP1_END -->
 
 </details>
@@ -41,31 +41,15 @@ This project automatically generates and updates a visual recap of every Formula
 </details>
 
 <details>
-<summary><strong>Sprint Shootout</strong></summary>
-
-<!-- SHOOTOUT_START -->
-<!-- SHOOTOUT_END -->
-
-</details>
-
-<details>
-<summary><strong>Sprint Race</strong></summary>
-
-<!-- SPRINT_START -->
-<!-- SPRINT_END -->
-
-</details>
-
-<details>
 <summary><strong>QUALIFYING</strong></summary>
 
 <!-- QUALIFYING_START -->
-![quali_result.png](visualization/2025_British_Grand_Prix/QUALIFYING/quali_result.png)
-![telemetry.png](visualization/2025_British_Grand_Prix/QUALIFYING/telemetry.png)
-![track_domination.png](visualization/2025_British_Grand_Prix/QUALIFYING/track_domination.png)
-![sector_gap.png](visualization/2025_British_Grand_Prix/QUALIFYING/sector_gap.png)
-![top_speed_comparison.png](visualization/2025_British_Grand_Prix/QUALIFYING/top_speed_comparison.png)
-![aero_performance.png](visualization/2025_British_Grand_Prix/QUALIFYING/aero_performance.png)
+![quali_result.png](visualization/2025_Belgian_Grand_Prix/QUALIFYING/quali_result.png)
+![telemetry.png](visualization/2025_Belgian_Grand_Prix/QUALIFYING/telemetry.png)
+![track_domination.png](visualization/2025_Belgian_Grand_Prix/QUALIFYING/track_domination.png)
+![sector_gap.png](visualization/2025_Belgian_Grand_Prix/QUALIFYING/sector_gap.png)
+![top_speed_comparison.png](visualization/2025_Belgian_Grand_Prix/QUALIFYING/top_speed_comparison.png)
+![aero_performance.png](visualization/2025_Belgian_Grand_Prix/QUALIFYING/aero_performance.png)
 <!-- QUALIFYING_END -->
 
 </details>
