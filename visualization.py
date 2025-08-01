@@ -103,7 +103,6 @@ def shade_periods(ax, sc_laps, vsc_laps,
 
 
 def tyre_strategy(session, save_path):
-    # gather stint table (incl. FreshTyre) ...............................
     laps = session.laps
     stints = (laps[["Driver","Stint","Compound","FreshTyre","LapNumber"]]
               .groupby(["Driver","Stint","Compound","FreshTyre"])
@@ -116,23 +115,23 @@ def tyre_strategy(session, save_path):
     # find SC / VSC laps once
     sc_laps, vsc_laps = find_sc_laps(laps)
 
-    # plotting ..........................................................
+    # plotting 
     fig, ax = plt.subplots(figsize=(14, 8), constrained_layout=True)
     ax.set_title(f"{session.event['EventName']} {session.event.year}  –  Tyre Strategy",
                  color='white')
     ax.set_facecolor("#202020"); fig.patch.set_facecolor("#202020")
     ax.invert_yaxis(); ax.grid(False)
 
-    # 1) shade neutral zones first
+    # shade neutral zones first
     shade_periods(ax, sc_laps, vsc_laps)
 
-    # 2) draw bars
+    # draw bars
     for drv in drivers:
         drv_stints = stints[stints["Driver"] == drv]
         x0 = 0
         for _, s in drv_stints.iterrows():
             ax.barh(drv, s["StintLength"], left=x0,
-                    color=fastf1.plotting.get_compound_mapping[s["Compound"]],
+                    color=get_compound_color(s["Compound"], session=session),
                     edgecolor="black",
                     hatch="" if s["FreshTyre"] else "//",
                     label=f"{s['Compound']} {'Fresh' if s['FreshTyre'] else 'Used'}")
