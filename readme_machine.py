@@ -149,17 +149,10 @@ def main():
 
     # cleanup empty sprint blocks on a normal weekend
     if not is_sprint:
-        text = open("README.md", "r", encoding="utf-8").read()
-        text = re.sub(
-            r"<details>\s*<summary><strong>Sprint Shootout.*?</details>\s*",
-            "", text, flags=re.DOTALL
-        )
-        text = re.sub(
-            r"<details>\s*<summary><strong>Sprint Race.*?</details>\s*",
-            "", text, flags=re.DOTALL
-        )
-        with open("README.md", "w", encoding="utf-8") as f:
-            f.write(text)
+        print("Clearing Sprint Quali section for sprint weekend")
+        update_readme_section("SPRINT_QUALIFYING", [])
+        print("Clearing Sprint section for sprint weekend")
+        update_readme_section("SPRINT", [])
 
     # Clear out FP2 & FP3 on sprint weekends
     if is_sprint:
