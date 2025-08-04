@@ -106,14 +106,9 @@ def main():
 
         # QUALI and SPRINT QUALIFYING both follow the same “top-2 + custom order” logic
         if tag in ("QUALIFYING", "SPRINT_QUALIFYING"):
-            # pick top-2 fastest laps
-            bests = []
-            for drv in sess.laps["Driver"].unique():
-                fl = sess.laps.pick_drivers(drv).pick_fastest()
-                if fl is not None:
-                    bests.append((drv, fl["LapTime"].total_seconds()))
-            bests.sort(key=lambda x: x[1])
-            d1, d2 = bests[0][0], bests[1][0]
+            res = sess.results
+            d1 = res["Abbreviation"].iloc[0]
+            d2 = res["Abbreviation"].iloc[1]
             bespoke = [
                 (quali_result,         (sess, os.path.join(folder, "quali_result.png"))),
                 (telemetry_comparison, (sess, d1, d2,   os.path.join(folder, "telemetry.png"))),

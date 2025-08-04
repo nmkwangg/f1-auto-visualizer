@@ -624,60 +624,48 @@ def aero_performance(session, save_path):
 
 
 def quali_result(session, save_path):
-    # Get unique list of drivers
-    drivers = pd.unique(session.laps['Driver'])
-
-    # Build list of each driver's fastest lap.
-    list_fastest_laps = []
-    for drv in drivers:
-        drvs_fastest_lap = session.laps.pick_drivers(drv).pick_fastest()
-        list_fastest_laps.append(drvs_fastest_lap)
-
-    # Create a Laps object from the fastest laps and sort them by LapTime.
-    fastest_laps = Laps(list_fastest_laps).sort_values(by='LapTime').reset_index(drop=True)
-
-    # Identify the pole lap (fastest overall) and calculate the LapTimeDelta.
-    pole_lap = fastest_laps.pick_fastest()
-    fastest_laps['LapTimeDelta'] = fastest_laps['LapTime'] - pole_lap['LapTime']
-
-    # Convert the LapTimeDelta to seconds.
-    fastest_laps['LapTimeDelta_sec'] = fastest_laps['LapTimeDelta'].dt.total_seconds()
-
-    # Get team colors for each fastest lap.
-    team_colors = []
-    for index, lap in fastest_laps.iterlaps():
-        color = fastf1.plotting.get_team_color(lap['Team'], session=session)
-        team_colors.append(color)
-
-    # Plot the horizontal bar chart using the seconds values.
+    # create fastest lap col
+    df = session.results
+    q1 = df["Q1"].iloc[-5:].tolist()
+    q2 = df["Q2"].iloc[10:15].tolist()
+    q3 = df["Q3"].iloc[:10].tolist()
+    combined = q3 + q2 + q1
+    df['fastest_lap'] = combined
+    # Compute delta from pole (first row)
+    pole_time = df["Q3"].iloc[0]
+    df["Delta_s"] = (df["fastest_lap"] - pole_time).dt.total_seconds()
+    
+    # Build bar chart
     fig, ax = plt.subplots()
-    ax.barh(fastest_laps.index, fastest_laps['LapTimeDelta_sec'],
-            color=team_colors, edgecolor='grey')
-    ax.set_yticks(fastest_laps.index)
-    ax.set_yticklabels(fastest_laps['Driver'])
-    ax.invert_yaxis()  # Fastest (lowest delta) at the top
-
+    bars = ax.barh(
+        df["Abbreviation"],
+        df["Delta_s"],
+        color=[fastf1.plotting.get_team_color(t, session=session) for t in df["TeamName"]],
+        edgecolor="grey")
+    ax.invert_yaxis()
+    ax.set_xlabel("Gap to Pole (s)", color="white")
+    # Format the plot title using the pole lap's time.
+    lap_time_string = strftimedelta(df['fastest_lap'].iloc[0], '%m:%s.%ms')
+    plt.suptitle(f"{session}\n"
+                 f"Fastest Lap: {lap_time_string} ({df['Abbreviation'].iloc[0]})", color='white')
     # Draw vertical grid lines behind the bars.
     ax.set_axisbelow(True)
-    ax.xaxis.grid(True, which='major', linestyle='--', color='black', zorder=-1000)
+    ax.xaxis.grid(True, which='major', linestyle='--', color='grey', zorder=-1000)
     ax.yaxis.grid(False)
     ax.tick_params(axis='x', colors='white')
     ax.tick_params(axis='y', colors='white')
-    # Annotate each bar with the lap time delta (in seconds, formatted to 4 decimal places).
-    offset = 0.02  # Seconds to offset the annotation to the right of the bar.
-    for i, delta_sec in fastest_laps['LapTimeDelta_sec'].items():
-        # Format the delta value as a float with four decimals.
-        label = f"+ {delta_sec:.4f} s"
-        ax.text(delta_sec + offset, i, label, va='center', ha='left', color='white', fontsize=10)
-    # remove all four spines = no white rectangle
+    # Annotate each bar
+    offset = 0.02
+    for bar, d in zip(bars, df["Delta_s"]):
+        ax.text(d + offset, bar.get_y() + bar.get_height()/2,
+                f"+{d:.3f}", va="center", ha='left', color="white", fontsize=10)
     for spine in ax.spines.values():
         spine.set_visible(False)
-    # Format the plot title using the pole lap's time.
-    lap_time_string = strftimedelta(pole_lap['LapTime'], '%m:%s.%ms')
-    plt.suptitle(f"{session}\n"
-                 f"Fastest Lap: {lap_time_string} ({pole_lap['Driver']})", color='white')
-
-    
+    # Style for dark background
+    fig.patch.set_facecolor("#202020")
+    ax.set_facecolor("#202020")
+    ax.tick_params(colors="white")
+    plt.tight_layout()
     fig.savefig(save_path)
     plt.close(fig)
 
