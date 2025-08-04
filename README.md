@@ -44,12 +44,7 @@ This project automatically generates and updates a visual recap of every Formula
 <summary><strong>SPRINT_QUALIFYING</strong></summary>
 
 <!-- SPRINT_QUALIFYING_START -->
-![quali_result.png](visualization/2025_Belgian_Grand_Prix/SPRINT_QUALIFYING/quali_result.png)
-![telemetry.png](visualization/2025_Belgian_Grand_Prix/SPRINT_QUALIFYING/telemetry.png)
-![track_domination.png](visualization/2025_Belgian_Grand_Prix/SPRINT_QUALIFYING/track_domination.png)
-![sector_gap.png](visualization/2025_Belgian_Grand_Prix/SPRINT_QUALIFYING/sector_gap.png)
-![top_speed_comparison.png](visualization/2025_Belgian_Grand_Prix/SPRINT_QUALIFYING/top_speed_comparison.png)
-![aero_performance.png](visualization/2025_Belgian_Grand_Prix/SPRINT_QUALIFYING/aero_performance.png)
+
 <!-- SPRINT_QUALIFYING_END -->
 
 </details>
@@ -58,10 +53,7 @@ This project automatically generates and updates a visual recap of every Formula
 <summary><strong>SPRINT</strong></summary>
 
 <!-- SPRINT_START -->
-![pos_change.png](visualization/2025_Belgian_Grand_Prix/SPRINT/pos_change.png)
-![tyre_strategy.png](visualization/2025_Belgian_Grand_Prix/SPRINT/tyre_strategy.png)
-![team_pace.png](visualization/2025_Belgian_Grand_Prix/SPRINT/team_pace.png)
-![tyre_deg.png](visualization/2025_Belgian_Grand_Prix/SPRINT/tyre_deg.png)
+
 <!-- SPRINT_END -->
 
 </details>
