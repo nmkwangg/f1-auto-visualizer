@@ -43,13 +43,38 @@ def get_latest_event():
     done  = sched[sched["Session1Date"] < pd.Timestamp.utcnow()]
     return year, done.iloc[-1]
 
+def get_latest_completed_event_in_year(year):
+    now = pd.Timestamp.now(tz="UTC")
+
+    sched = fastf1.get_event_schedule(year, include_testing=False).copy()
+
+    # Find all session date columns
+    session_cols = [c for c in sched.columns if re.fullmatch(r"Session\d+Date", str(c))]
+    if not session_cols:
+        return None
+
+    # Force UTC tz-aware
+    for c in session_cols:
+        sched[c] = pd.to_datetime(sched[c], errors="coerce", utc=True)
+
+    # Use latest session date as "event completion marker"
+    sched["__last_session_dt"] = sched[session_cols].max(axis=1)
+
+    done = sched[sched["__last_session_dt"].notna() & (sched["__last_session_dt"] < now)] \
+        .sort_values("__last_session_dt")
+
+    if done.empty:
+        return None
+
+    return done.iloc[-1]
 
 def main():
-    year = pd.Timestamp.utcnow().year
-    # load schedule and pick the last completed event
-    sched = fastf1.get_event_schedule(year, include_testing=False)
-    done  = sched[sched["Session1Date"] < pd.Timestamp.utcnow()]
-    ev    = done.iloc[-1]
+    year = pd.Timestamp.now(tz="UTC").year
+
+    ev = get_latest_completed_event_in_year(year)
+    if ev is None:
+        print(f"No completed events yet for {year}. Leaving README unchanged.")
+        return
 
     fmt   = str(ev.get("EventFormat", "")).strip().lower()
     is_sprint = "sprint" in fmt
