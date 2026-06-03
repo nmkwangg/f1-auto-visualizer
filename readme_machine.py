@@ -69,26 +69,31 @@ def get_latest_completed_event_in_year(year):
     return done.iloc[-1]
 
 def get_top_two_drivers(sess):
-    res = getattr(sess, "results", None)
+    # Try official results first
+    try:
+        res = sess.results
+        if res is not None and not res.empty and "Abbreviation" in res.columns:
+            drivers = res["Abbreviation"].dropna().astype(str).tolist()
+            if len(drivers) >= 2:
+                return drivers[0], drivers[1]
+    except Exception as e:
+        print(f"Could not use session results: {e}")
 
-    if res is not None and not res.empty and "Abbreviation" in res.columns:
-        drivers = res["Abbreviation"].dropna().astype(str).tolist()
-        if len(drivers) >= 2:
-            return drivers[0], drivers[1]
+    # Fallback: try fastest laps
+    try:
+        laps = sess.laps
+        if laps is not None and not laps.empty and {"Driver", "LapTime"}.issubset(laps.columns):
+            best = (
+                laps.dropna(subset=["LapTime"])
+                    .sort_values("LapTime")
+                    .drop_duplicates("Driver")
+            )
+            drivers = best["Driver"].dropna().astype(str).tolist()
 
-    # Fallback: use fastest laps if official results are unavailable
-    laps = getattr(sess, "laps", None)
-
-    if laps is not None and not laps.empty and {"Driver", "LapTime"}.issubset(laps.columns):
-        best = (
-            laps.dropna(subset=["LapTime"])
-                .sort_values("LapTime")
-                .drop_duplicates("Driver")
-        )
-        drivers = best["Driver"].dropna().astype(str).tolist()
-
-        if len(drivers) >= 2:
-            return drivers[0], drivers[1]
+            if len(drivers) >= 2:
+                return drivers[0], drivers[1]
+    except Exception as e:
+        print(f"Could not use lap data for top-two drivers: {e}")
 
     return None, None
 
@@ -141,7 +146,7 @@ def main():
         # try to load the session
         try:
             sess = get_session(year, ev["EventName"], code)
-            sess.load()
+            sess.load(laps=True, telemetry=True, weather=True, messages=True)
             print(f"Loaded {tag}")
         except Exception as e:
             print(f"Could not load {tag}: {e}")
