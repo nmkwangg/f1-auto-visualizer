@@ -43,33 +43,36 @@ def get_latest_event():
     done  = sched[sched["Session1Date"] < pd.Timestamp.utcnow()]
     return year, done.iloc[-1]
 
-def get_latest_completed_event_in_year(year):
+def get_latest_event_with_fastf1_data(year):
     now = pd.Timestamp.now(tz="UTC")
-
     sched = fastf1.get_event_schedule(year, include_testing=False).copy()
 
-    # Find all session date columns
     session_cols = [c for c in sched.columns if re.fullmatch(r"Session\d+Date", str(c))]
-    if not session_cols:
-        return None
-
-    # Force UTC tz-aware
     for c in session_cols:
         sched[c] = pd.to_datetime(sched[c], errors="coerce", utc=True)
 
-    # Use latest session date as "event completion marker"
     sched["__last_session_dt"] = sched[session_cols].max(axis=1)
 
-    done = sched[sched["__last_session_dt"].notna() & (sched["__last_session_dt"] < now)] \
-        .sort_values("__last_session_dt")
+    done = (
+        sched[sched["__last_session_dt"].notna() & (sched["__last_session_dt"] < now)]
+        .sort_values("__last_session_dt", ascending=False)
+    )
 
-    if done.empty:
-        return None
+    for _, ev in done.iterrows():
+        try:
+            test_sess = get_session(year, ev["EventName"], "R")
+            test_sess.load(laps=True, telemetry=False, weather=False, messages=False)
 
-    return done.iloc[-1]
+            if has_lap_data(test_sess):
+                return ev
+
+            print(f"Skipping {ev['EventName']}: no usable race lap data yet.")
+        except Exception as e:
+            print(f"Skipping {ev['EventName']}: {e}")
+
+    return None
 
 def get_top_two_drivers(sess):
-    # Try official results first
     try:
         res = sess.results
         if res is not None and not res.empty and "Abbreviation" in res.columns:
@@ -79,7 +82,6 @@ def get_top_two_drivers(sess):
     except Exception as e:
         print(f"Could not use session results: {e}")
 
-    # Fallback: try fastest laps
     try:
         laps = sess.laps
         if laps is not None and not laps.empty and {"Driver", "LapTime"}.issubset(laps.columns):
@@ -97,10 +99,25 @@ def get_top_two_drivers(sess):
 
     return None, None
 
+def has_lap_data(sess):
+    try:
+        laps = sess.laps
+        return laps is not None and not laps.empty
+    except Exception:
+        return False
+
+
+def has_result_data(sess):
+    try:
+        res = sess.results
+        return res is not None and not res.empty
+    except Exception:
+        return False
+
 def main():
     year = pd.Timestamp.now(tz="UTC").year
 
-    ev = get_latest_completed_event_in_year(year)
+   ev = get_latest_event_with_fastf1_data(year)
     if ev is None:
         print(f"No completed events yet for {year}. Leaving README unchanged.")
         return
@@ -150,7 +167,11 @@ def main():
             print(f"Loaded {tag}")
         except Exception as e:
             print(f"Could not load {tag}: {e}")
-            # clear out that section so old images disappear
+            update_readme_section(tag, [])
+            continue
+        
+        if not has_lap_data(sess) and not has_result_data(sess):
+            print(f"Skipping {tag}: FastF1 loaded metadata, but no usable laps/results are available.")
             update_readme_section(tag, [])
             continue
 
