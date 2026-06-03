@@ -8,10 +8,7 @@ This project automatically generates and updates a visual recap of every Formula
 <summary><strong>FP1</strong></summary>
 
 <!-- FP1_START -->
-![sector_gap.png](visualization/2026_Miami_Grand_Prix/FP1/sector_gap.png)
-![top_speed_comparison.png](visualization/2026_Miami_Grand_Prix/FP1/top_speed_comparison.png)
-![plot_top_speed_heatmap.png](visualization/2026_Miami_Grand_Prix/FP1/plot_top_speed_heatmap.png)
-![aero_performance.png](visualization/2026_Miami_Grand_Prix/FP1/aero_performance.png)
+
 <!-- FP1_END -->
 
 </details>
@@ -38,11 +35,7 @@ This project automatically generates and updates a visual recap of every Formula
 <summary><strong>SPRINT_QUALIFYING</strong></summary>
 
 <!-- SPRINT_QUALIFYING_START -->
-![telemetry.png](visualization/2026_Miami_Grand_Prix/SPRINT_QUALIFYING/telemetry.png)
-![track_domination.png](visualization/2026_Miami_Grand_Prix/SPRINT_QUALIFYING/track_domination.png)
-![sector_gap.png](visualization/2026_Miami_Grand_Prix/SPRINT_QUALIFYING/sector_gap.png)
-![top_speed_comparison.png](visualization/2026_Miami_Grand_Prix/SPRINT_QUALIFYING/top_speed_comparison.png)
-![aero_performance.png](visualization/2026_Miami_Grand_Prix/SPRINT_QUALIFYING/aero_performance.png)
+
 <!-- SPRINT_QUALIFYING_END -->
 
 </details>
@@ -51,9 +44,7 @@ This project automatically generates and updates a visual recap of every Formula
 <summary><strong>SPRINT</strong></summary>
 
 <!-- SPRINT_START -->
-![tyre_strategy.png](visualization/2026_Miami_Grand_Prix/SPRINT/tyre_strategy.png)
-![team_pace.png](visualization/2026_Miami_Grand_Prix/SPRINT/team_pace.png)
-![tyre_deg.png](visualization/2026_Miami_Grand_Prix/SPRINT/tyre_deg.png)
+
 <!-- SPRINT_END -->
 
 </details>
@@ -62,11 +53,7 @@ This project automatically generates and updates a visual recap of every Formula
 <summary><strong>QUALIFYING</strong></summary>
 
 <!-- QUALIFYING_START -->
-![telemetry.png](visualization/2026_Miami_Grand_Prix/QUALIFYING/telemetry.png)
-![track_domination.png](visualization/2026_Miami_Grand_Prix/QUALIFYING/track_domination.png)
-![sector_gap.png](visualization/2026_Miami_Grand_Prix/QUALIFYING/sector_gap.png)
-![top_speed_comparison.png](visualization/2026_Miami_Grand_Prix/QUALIFYING/top_speed_comparison.png)
-![aero_performance.png](visualization/2026_Miami_Grand_Prix/QUALIFYING/aero_performance.png)
+
 <!-- QUALIFYING_END -->
 
 </details>
@@ -75,10 +62,7 @@ This project automatically generates and updates a visual recap of every Formula
 <summary><strong>RACE</strong></summary>
 
 <!-- RACE_START -->
-![pos_change.png](visualization/2026_Miami_Grand_Prix/RACE/pos_change.png)
-![tyre_strategy.png](visualization/2026_Miami_Grand_Prix/RACE/tyre_strategy.png)
-![team_pace.png](visualization/2026_Miami_Grand_Prix/RACE/team_pace.png)
-![tyre_deg.png](visualization/2026_Miami_Grand_Prix/RACE/tyre_deg.png)
+
 <!-- RACE_END -->
 
 </details>
