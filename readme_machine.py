@@ -117,7 +117,7 @@ def has_result_data(sess):
 def main():
     year = pd.Timestamp.now(tz="UTC").year
 
-   ev = get_latest_event_with_fastf1_data(year)
+    ev = get_latest_event_with_fastf1_data(year)
     if ev is None:
         print(f"No completed events yet for {year}. Leaving README unchanged.")
         return
