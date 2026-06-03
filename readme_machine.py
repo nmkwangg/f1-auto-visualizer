@@ -68,6 +68,30 @@ def get_latest_completed_event_in_year(year):
 
     return done.iloc[-1]
 
+def get_top_two_drivers(sess):
+    res = getattr(sess, "results", None)
+
+    if res is not None and not res.empty and "Abbreviation" in res.columns:
+        drivers = res["Abbreviation"].dropna().astype(str).tolist()
+        if len(drivers) >= 2:
+            return drivers[0], drivers[1]
+
+    # Fallback: use fastest laps if official results are unavailable
+    laps = getattr(sess, "laps", None)
+
+    if laps is not None and not laps.empty and {"Driver", "LapTime"}.issubset(laps.columns):
+        best = (
+            laps.dropna(subset=["LapTime"])
+                .sort_values("LapTime")
+                .drop_duplicates("Driver")
+        )
+        drivers = best["Driver"].dropna().astype(str).tolist()
+
+        if len(drivers) >= 2:
+            return drivers[0], drivers[1]
+
+    return None, None
+
 def main():
     year = pd.Timestamp.now(tz="UTC").year
 
@@ -131,17 +155,21 @@ def main():
 
         # QUALI and SPRINT QUALIFYING both follow the same “top-2 + custom order” logic
         if tag in ("QUALIFYING", "SPRINT_QUALIFYING"):
-            res = sess.results
-            d1 = res["Abbreviation"].iloc[0]
-            d2 = res["Abbreviation"].iloc[1]
+            d1, d2 = get_top_two_drivers(sess)
+        
             bespoke = [
                 (quali_result,         (sess, os.path.join(folder, "quali_result.png"))),
-                (telemetry_comparison, (sess, d1, d2,   os.path.join(folder, "telemetry.png"))),
-                (track_domination,     (sess, d1, d2,   os.path.join(folder, "track_domination.png"))),
                 (sector_gap,           (sess, os.path.join(folder, "sector_gap.png"))),
                 (top_speed_comparison, (sess, os.path.join(folder, "top_speed_comparison.png"))),
                 (aero_performance,     (sess, os.path.join(folder, "aero_performance.png"))),
             ]
+        
+            if d1 is not None and d2 is not None:
+                bespoke.insert(1, (telemetry_comparison, (sess, d1, d2, os.path.join(folder, "telemetry.png"))))
+                bespoke.insert(2, (track_domination,     (sess, d1, d2, os.path.join(folder, "track_domination.png"))))
+            else:
+                print(f"Skipping driver comparison plots for {tag}: fewer than 2 drivers available.")
+        
             for fn, args in bespoke:
                 print(f"  ▶️ {fn.__name__} for {tag} …")
                 try:
@@ -150,7 +178,7 @@ def main():
                     print("success")
                 except Exception as e:
                     print(f"failed: {e}")
-
+                    
         else:
             # all other sessions from session_plots
             for fn in session_plots.get(tag, []):
