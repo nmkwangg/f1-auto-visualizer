@@ -252,7 +252,7 @@ def sector_gap(session, save_path):
 
 def top_speed_comparison(session, save_path):
     """Draw a top‑speed bar chart, cropping the first *cut* km/h."""
-    cut = 310
+    cut = 280
     # -------- gather fastest‑lap top speeds --------------------------------
     rows = []
     for drv in session.laps['Driver'].unique():
